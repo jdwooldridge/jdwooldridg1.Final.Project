@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<Level1 background="./Assets/Images/bg_level1.png">
+  <GameAsset name="Box">
+	<Component name="Sprite"/>
+    <Component name="Body" x="500.0f" y="750.0f" angle="0.0f" type="GAME_DYNAMIC" shape="GAME_RECTANGLE" density="2.0f" friction="0.9f" restitution="4.0f" angularDamping="10.0f" linearDamping="0.1f" physicsOn="true"/>
+    <Component name="Slide"/>    
+  </GameAsset>
+  <GameAsset name="John">
+	<Component name="Sprite"/>
+	<Component name="Body" x="0.0f" y="750.0f" angle="0.0f" type="GAME_DYNAMIC" shape="GAME_CIRCLE" density="1.0f" friction="0.3f" restitution="18.0f" angularDamping="10.0f" linearDamping="1.0f" physicsOn="true"/>
+	<Component name="Input"/>
+   </GameAsset>
+</Level1>
