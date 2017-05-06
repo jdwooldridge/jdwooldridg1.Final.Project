@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SDL.h"
 #include "ComponentList.h"
 
 class GraphicsDevice;
@@ -16,8 +17,10 @@ public:
 	bool Finish();
 	void Draw();
 	Texture* GetTexture() { return texture; }
+	void setFlip(SDL_RendererFlip flip) { this->flip = flip; }
 private:
 	Texture* texture;
 	GraphicsDevice* gDevice;
 	View* view;
+	SDL_RendererFlip flip;
 };

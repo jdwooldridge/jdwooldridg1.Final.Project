@@ -21,10 +21,12 @@ Game::Game()
 	gLibrary = std::make_unique<GameAssetLibrary>();
 	iDevice = std::make_unique<InputDevice>();
 	pLibrary = std::make_unique<PhysicsAssetLibrary>();
-	pDevice = std::make_unique<PhysicsDevice>(0, 9.8f);
+	pDevice = std::make_unique<PhysicsDevice>(0, -9.8f);
 	gameTime = 0;
 	paused = false;
 	curLevel = 1;
+	score = 0;
+	dt = 1 / GAME_FPS;
 }
 
 Game::~Game()
@@ -70,7 +72,6 @@ bool Game::Initialize()
 		std::cout << "Could not initialize physics device!" << std::endl;
 		return false;
 	}
-
 	return true;
 }
 
@@ -84,6 +85,8 @@ bool Game::Update()
 	for (std::vector<std::shared_ptr<Object>>::iterator object = objects.begin(); object != objects.end(); ++object)
 	{
 		//if it is dead
+		if ((*object)->getObjectType() == "John" && (*object)->getIsDead())
+			std::cout << "YOU DIED.";
 		if ((*object)->getIsDead())
 		{
 			//close off the componenets.
@@ -173,11 +176,11 @@ bool Game::LoadLevel(std::string levelConfigFile, std::string objectConfigFile)
 	gDevice->setBackground(bgPath);
 
 	lvlRoot = lvlRoot->FirstChildElement("GameAsset");
-	//std::unique_ptr<Object> tmp(); //THIS PROBABLY CAUSES PROBLEMS.
+
 	while (lvlRoot)
 	{
 		std::shared_ptr<ObjectFactory> objectFactory; /*= gLibrary->Search(lvlRoot->Attribute("name")); //Find object factory for the loaded object.*/
-		std::shared_ptr<Object> tmp = objectFactory->create(lvlRoot, this); //Create the object.
+		std::shared_ptr<Object> tmp = objectFactory->create(lvlRoot); //Create the object.
 		if (tmp == NULL)
 		{
 			std::cout << "Error: Could not initialize object!";

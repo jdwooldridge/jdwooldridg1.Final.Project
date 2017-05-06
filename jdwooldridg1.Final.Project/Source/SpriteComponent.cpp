@@ -10,6 +10,8 @@ bool SpriteComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS presets)
 	//Add the sprite to the sprite vector in the graphics device.
 	gDevice->addSprite(this);
 
+	flip = SDL_FLIP_NONE;
+
 	//Set the texture.
 	texture = presets.game->getArtAssetLibrary()->Search(presets.objectType).get();
 
@@ -28,5 +30,5 @@ bool SpriteComponent::Finish()
 //Draw this sprite.
 void SpriteComponent::Draw()
 {
-	texture->Draw(gDevice->getRenderer(), view, _owner->GetComponent<BodyComponent>()->getPosition(), _owner->GetComponent<BodyComponent>()->getAngle(), NULL);
+	texture->Draw(gDevice->getRenderer(), view, _owner->GetComponent<BodyComponent>()->getPosition(), _owner->GetComponent<BodyComponent>()->getAngle(), NULL, flip);
 }

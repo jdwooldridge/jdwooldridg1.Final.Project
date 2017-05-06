@@ -21,7 +21,7 @@ public:
 	void free();
 
 	//Renders texture at a certain point.
-	void Draw(SDL_Renderer* renderer, View* view, GAME_VEC position, GAME_FLT angle, SDL_Rect* clip = nullptr);
+	void Draw(SDL_Renderer* renderer, View* view, GAME_VEC position, GAME_FLT angle, SDL_Rect* clip, SDL_RendererFlip flip);
 
 	int getWidth();
 	int getHeight();

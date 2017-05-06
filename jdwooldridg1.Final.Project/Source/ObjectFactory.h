@@ -8,5 +8,10 @@ class TiXmlElement;
 class ObjectFactory
 {
 public:
-	std::shared_ptr<Object> create(TiXmlElement*, Game*);
+	ObjectFactory(Game*);
+	~ObjectFactory();
+	std::shared_ptr<Object> create(TiXmlElement*);
+	std::unique_ptr<Object> create(std::vector<std::string>, GAME_OBJECTFACTORY_INITIALIZERS);
+private:
+	Game* game;
 };

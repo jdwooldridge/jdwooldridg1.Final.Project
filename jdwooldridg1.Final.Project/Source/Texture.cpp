@@ -76,7 +76,7 @@ void Texture::free()
 	}
 }
 //Draw texture onto screen and set render space.
-void Texture::Draw(SDL_Renderer * renderer, View * view, GAME_VEC position, GAME_FLT angle, SDL_Rect * clip)
+void Texture::Draw(SDL_Renderer * renderer, View * view, GAME_VEC position, GAME_FLT angle, SDL_Rect * clip, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen.
 	SDL_Rect renderQuad = { position.x - view->getPosition().x, position.y - view->getPosition().y, width, height };
@@ -95,7 +95,7 @@ void Texture::Draw(SDL_Renderer * renderer, View * view, GAME_VEC position, GAME
 	SDL_RenderGetViewport(renderer, &screen);*/
 
 	//Render to screen
-	SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, angle, NULL, flip);
 
 }
 

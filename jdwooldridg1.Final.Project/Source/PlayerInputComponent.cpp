@@ -20,10 +20,13 @@ std::unique_ptr<Object> PlayerInputComponent::Update()
 	GAME_VEC linearVelocity = { 0, 0 };
 	GAME_VEC force;
 	GAME_VEC updatedPosition;
-	/*if (iDevice->GetEvent(GAME_UP))
-		_owner->GetComponent<BodyComponent>()->setPositionY(_owner->GetComponent<BodyComponent>()->getPosition().y - 2);*/
+	if (iDevice->GetEvent(GAME_UP))
+	{
+		linearVelocity.y = -2.0f;
+	}
 	if (iDevice->GetEvent(GAME_LEFT))
 	{
+		_owner->GetComponent<SpriteComponent>()->setFlip(SDL_FLIP_HORIZONTAL);
 		linearVelocity.x = -2.0f;
 		pDevice->SetLinearVelocity(_owner.get(), linearVelocity);
 		force = pDevice->GetLinearVelocity(_owner.get());
@@ -33,6 +36,7 @@ std::unique_ptr<Object> PlayerInputComponent::Update()
 	}
 	if (iDevice->GetEvent(GAME_RIGHT))
 	{
+		_owner->GetComponent<SpriteComponent>()->setFlip(SDL_FLIP_NONE);
 		linearVelocity.x = 2.0f;//(float)cosf((pDevice->GetAngle(_owner.get())*PI / 180) - (PI / 2)) * 2.0f;
 		pDevice->SetLinearVelocity(_owner.get(), linearVelocity);
 		force = pDevice->GetLinearVelocity(_owner.get());
@@ -47,10 +51,8 @@ std::unique_ptr<Object> PlayerInputComponent::Update()
 
 	if (_owner->GetComponent<BodyComponent>()->getPosition().x  - view->getPosition().x > SCREEN_WIDTH - borderDistance)
 	{
-		//for(int i = 0; i < SCREEN_WIDTH / 2; ++i)
 			view->setPositionX(view->getPosition().x + 1);
 			_owner->GetComponent<BodyComponent>()->setPositionX((SCREEN_WIDTH + view->getPosition().x) - borderDistance);
-		//_owner->GetComponent<BodyComponent>()->setPositionX(_owner->GetComponent<BodyComponent>()->getPosition().x - view->getPosition().x);
 	}
 
 	//Ensure the player cannot backtrack/go to the left out of the view.

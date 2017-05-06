@@ -51,6 +51,7 @@ private:
 	bool paused;
 	GAME_INT curLevel;
 	GAME_FLT dt;
+	GAME_INT score;
 };
 
 #endif // !GAME_H

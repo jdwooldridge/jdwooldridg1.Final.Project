@@ -20,10 +20,14 @@ void ContactListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifold
 		
 		
 	//If an arrow comes into contact with an octorok or leever, set their isDead properties to true so that they will be destroyed on the next object update iteration.
-	if(objectAType == "Bullet" && (objectBType == "Boss" || objectBType == "Box" || objectBType == "Blue Octorok" || objectBType == "Blue Leever"))
+	if(objectAType == "Bullet" && (objectBType == "Boss" || objectBType == "Box" || objectBType == "Bowl" || objectBType == "Spoon"))
 	{
 		objectA->setIsDead(true);
 		objectB->setIsDead(true);
+	}
+	if ((objectAType == "Boss" || objectAType == "Box" || objectAType == "Bowl" || objectAType == "Spoon") && objectBType == "Player")
+	{
+		objectB->GetComponent<HealthComponent>()->SetHealth(objectB->GetComponent<HealthComponent>()->GetHealth() - 10);
 	}
 
 }

@@ -75,7 +75,7 @@ bool GraphicsDevice::Initialize(bool fullScreen)
 		printf( "Renderer could not be created! SDL_Error: %s\n", SDL_GetError() );
 		return(false);
 	}
-
+	
 	//Set the background color (default)
 	SDL_SetRenderDrawColor(renderer,237,201,175,255);
 
@@ -94,6 +94,9 @@ bool GraphicsDevice::ShutDown()
 	//Free the window
 	SDL_DestroyWindow(screen);
 	screen = NULL;
+
+	SDL_DestroyTexture(background);
+	background = NULL;
 
 	//Free renderer
 	SDL_DestroyRenderer(renderer);
@@ -119,10 +122,35 @@ void GraphicsDevice::Present()
 }
 
 //Set the level's background.
-void GraphicsDevice::setBackground(std::string background)
+void GraphicsDevice::setBackground(std::string bgPath)
 {
-	this->background = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP(background.c_str()));
-	SDL_RenderCopy(renderer, this->background, NULL, NULL);
+	background = NULL;
+
+	//Load image at specified path
+	SDL_Surface* loadedSurface = IMG_Load(bgPath.c_str());
+	if (loadedSurface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", bgPath.c_str(), IMG_GetError());
+	}
+	else
+	{
+		//Create texture from surface pixels
+		background = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		if (background == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", bgPath.c_str(), SDL_GetError());
+		}
+
+		//Display the background itself.
+		SDL_RenderCopy(renderer, background, NULL, NULL);
+
+		Begin();
+
+		Present();
+
+		//Get rid of old loaded surface
+		SDL_FreeSurface(loadedSurface);
+	}
 }
 
 //Retrieve the renderer.
@@ -131,11 +159,13 @@ SDL_Renderer* GraphicsDevice::getRenderer()
 	return(renderer);
 }
 
+//Add a sprite.
 void GraphicsDevice::addSprite(SpriteComponent* sprite)
 {
 	sprites.push_back(sprite);
 }
 
+//Draw all loaded sprites.
 void GraphicsDevice::Draw()
 {
 	for (auto sprite : sprites)

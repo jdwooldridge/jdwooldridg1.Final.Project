@@ -5,7 +5,15 @@
 #include "ComponentList.h"
 #include "ObjectFactory.h"
 
-std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot, Game* game)
+ObjectFactory::ObjectFactory(Game* game)
+{
+	this->game = game;
+}
+
+
+ObjectFactory::~ObjectFactory() {}
+
+std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot)
 {
 	std::shared_ptr<Object> newObject = std::make_shared<Object>();
 	GAME_OBJECTFACTORY_INITIALIZERS presets;
@@ -13,10 +21,14 @@ std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot, Game* game)
 	presets.objectType = lvlRoot->Attribute("name");
 
 	TiXmlElement* comp = lvlRoot->FirstChildElement("Component");
+	std::vector<std::string> componentList;
+
 	while (comp)
 	{
+		std::string componentName = comp->Attribute("name");
+		componentList.push_back(componentName);
 
-		if (strcmp(comp->Attribute("name"), "Body") == 0)
+		if (componentName ==  "Body")
 		{
 			comp->QueryFloatAttribute("x", &presets.position.x);
 			comp->QueryFloatAttribute("y", &presets.position.y);
@@ -35,28 +47,42 @@ std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot, Game* game)
 			comp->QueryFloatAttribute("angularDamping", &presets.angularDamping);
 			comp->QueryFloatAttribute("linearDamping", &presets.linearDamping);
 			comp->QueryBoolAttribute("physicsOn", &presets.physicsOn);
-			newObject->addComponent(std::make_shared<BodyComponent>(newObject));
 		}
-		else if (strcmp(comp->Attribute("name"), "Slide") == 0)
+
+		else if (componentName == "Health")
 		{
-			//comp->QueryBoolAttribute("vertical", &presets.vertical);
-			newObject->addComponent(std::make_shared<SlideBehaviorComponent>(newObject));
+			comp->QueryUnsignedAttribute("amount", &presets.health);
 		}
-		else if (strcmp(comp->Attribute("name"), "Input") == 0)
-			newObject->addComponent(std::make_shared<PlayerInputComponent>(newObject));
-		
-		else if (strcmp(comp->Attribute("name"), "Sprite") == 0)
-			newObject->addComponent(std::make_shared<SpriteComponent>(newObject));
 
 		comp = comp->NextSiblingElement("Component");
 	}
-	presets.game = game;
-	if (newObject->Initialize(presets))
-		return newObject;
-	else
+	
+	return std::move(create(componentList, presets));
+}
+
+std::unique_ptr<Object> create(std::vector<std::string> componentList, GAME_OBJECTFACTORY_INITIALIZERS initializers)
+{
+	//Create object.
+	std::unique_ptr<Object> newObject = std::make_unique<Object>();
+
+	for (auto component : componentList)
 	{
-		std::cout << "Object did not initialize!" << std::endl;
-		return NULL;
+		if (component == "Body")
+			newObject->addComponent(std::make_shared<BodyComponent>(newObject.get()));
+		else if (component == "Sprite")
+			newObject->addComponent(std::make_shared<SpriteComponent>(newObject.get()));
+		else if (component == "Slide")
+			newObject->addComponent(std::make_shared<SlideBehaviorComponent>(newObject.get()));
+		else if (component == "Input")
+			newObject->addComponent(std::make_shared<SlideBehaviorComponent>(newObject.get()));
+		else if (component == "Health")
+			newObject->addComponent(std::make_shared<HealthComponent>(newObject.get()));
 	}
-	//return std::unique_ptr<Object>();
+	if (!newObject->Initialize(initializers))
+	{
+		std::cout << "Failed to initialize object!" << std::endl;
+		return nullptr;
+	}
+	else
+		return std::move(newObject);
 }

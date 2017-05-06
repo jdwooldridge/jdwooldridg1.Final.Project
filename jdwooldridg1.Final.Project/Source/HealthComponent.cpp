@@ -5,13 +5,11 @@
 //#include "ResourceManager.h"
 #include "PhysicsDevice.h"
 
-
-HealthComponent::HealthComponent(std::shared_ptr<Object> _owner) : Component(_owner) {}
-HealthComponent::~HealthComponent() {}
+//HealthComponent::~HealthComponent() {}
 
 //**************************************
 //gets health and resource manager from passed presets, the object starts out alive.
-bool HealthComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS& presets)
+bool HealthComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS presets)
 //**************************************
 {
 	//devices = presets.devices;
@@ -23,18 +21,18 @@ bool HealthComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS& presets)
 //**************************************
 //This "KillObject" is for items that leave a sprite that is dead 
 //and does not interact with the world
-bool HealthComponent::KillObject(std::string deathSprite)
-//**************************************
-{
-	//Stop the physics of the object
-	pDevice->SetStopPhysics(_owner.get());
-
-	//grab the renderer
-	std::shared_ptr<SpriteComponent> compRenderer = _owner -> GetComponent<SpriteComponent>();
-	//change the sprite
-	//compRenderer->SetTexture(devices->GetArtLibrary()->Search(deathSprite));
-	return true;
-}
+//bool HealthComponent::KillObject(std::string deathSprite)
+////**************************************
+//{
+//	//Stop the physics of the object
+//	pDevice->SetStopPhysics(_owner.get());
+//
+//	//grab the renderer
+//	std::shared_ptr<SpriteComponent> compRenderer = _owner -> GetComponent<SpriteComponent>();
+//	//change the sprite
+//	//compRenderer->SetTexture(devices->GetArtLibrary()->Search(deathSprite));
+//	return true;
+//}
 //**************************************
 //For objects that disappear from the game.
 bool HealthComponent::KillObject()
