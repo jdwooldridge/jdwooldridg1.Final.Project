@@ -28,11 +28,11 @@ bool Object::Initialize(GAME_OBJECTFACTORY_INITIALIZERS presets/*TiXmlElement* r
 	return true;
 }
 
-std::unique_ptr<Object> Object::Update(GAME_FLT)
+std::shared_ptr<Object> Object::Update(GAME_FLT)
 {
-	std::unique_ptr<Object> objectReturn;
+	std::shared_ptr<Object> objectReturn;
 	for (auto comp : components)
-		comp->Update();
+		objectReturn = comp->Update();
 	return objectReturn;
 }
 

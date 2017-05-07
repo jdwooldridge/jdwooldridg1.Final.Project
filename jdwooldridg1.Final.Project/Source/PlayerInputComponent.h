@@ -4,7 +4,7 @@
 
 #include "ComponentList.h"
 
-class InputDevice;
+class DeviceAndLibraryManager;
 
 class PlayerInputComponent : public Component
 {
@@ -13,11 +13,10 @@ public:
         : Component(owner)
     { };
 	bool Initialize(GAME_OBJECTFACTORY_INITIALIZERS initializers);
-	std::unique_ptr<Object> Update();
+	std::shared_ptr<Object> Update();
 	bool Finish();
 private:
-	InputDevice* iDevice;
-	View* view;
-	PhysicsDevice* pDevice;
+	GAME_INT reloadTime;
+	std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries;
 	std::map<GAME_EVENT, bool> controlPressed;
 };

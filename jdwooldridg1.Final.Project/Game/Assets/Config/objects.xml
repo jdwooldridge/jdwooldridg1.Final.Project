@@ -3,4 +3,5 @@
   <Creature name="John" sprite="./Assets/Images/johnStand.png"/>
   <Creature name="Box" sprite="./Assets/Images/box.png"/>
   <Creature name="Bowl" sprite="./Assets/Images/bowl.png"/>
+  <!-- <Creature name="Bullet" sprite="./Assets/Images/cereal.png"/> -->
 </Objects>

@@ -10,10 +10,10 @@ bool BodyComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS initializers)
 	position.y = initializers.position.y;
 	angle = initializers.angle;
 
-	pDevice = initializers.game->getPhysicsDevice();
+	devicesAndLibraries = initializers.devicesAndLibraries;
 
 	//Create fixture.
-	if (!pDevice->createFixture(_owner.get(), initializers))
+	if (!devicesAndLibraries->getPhysicsDevice()->createFixture(_owner.get(), initializers))
 	{
 		printf("Error: Failed to create object fixture!");
 		return false;
@@ -22,18 +22,18 @@ bool BodyComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS initializers)
 	return true;
 }
 
-std::unique_ptr<Object> BodyComponent::Update()
+std::shared_ptr<Object> BodyComponent::Update()
 {
-	GAME_VEC newPosition = pDevice->GetPosition(_owner.get());
+	GAME_VEC newPosition = devicesAndLibraries->getPhysicsDevice()->GetPosition(_owner.get());
 	position.x = newPosition.x;
 	position.y = newPosition.y;
-	angle = pDevice->GetAngle(_owner.get());
+	angle = devicesAndLibraries->getPhysicsDevice()->GetAngle(_owner.get());
 	return nullptr;
 }
 
 bool BodyComponent::Finish()
 {
-	if (!pDevice->RemoveObject(_owner.get()))
+	if (!devicesAndLibraries->getPhysicsDevice()->RemoveObject(_owner.get()))
 	{
 		printf("Object could not be removed from the physics world!");
 		return false;

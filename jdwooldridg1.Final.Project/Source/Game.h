@@ -12,6 +12,7 @@
 #include "Object.h"
 #include "GraphicsDevice.h"
 #include "Timer.h"
+#include "DeviceAndLibraryManager.h"
 #include "tinyxml\tinyxml.h"
 
 #include <iostream>
@@ -29,23 +30,18 @@ public:
 	bool Run();
 	bool Update();
 	void Draw();
-	GraphicsDevice* getGraphicsDevice();
-	View* getView();
-	ArtAssetLibrary* getArtAssetLibrary();
-	InputDevice* getInputDevice();
-	PhysicsDevice* getPhysicsDevice() { return pDevice.get(); }
-	PhysicsAssetLibrary* getPhysicsAssetLibrary() { return pLibrary.get(); }
 
 private:
-	std::unique_ptr<GameAssetLibrary> gLibrary;
+	std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries;
+	/*std::unique_ptr<GameAssetLibrary> gLibrary;
 	std::unique_ptr<ArtAssetLibrary> aLibrary;
 	std::unique_ptr<GraphicsDevice> gDevice;
 	std::unique_ptr<PhysicsAssetLibrary> pLibrary;
-	std::unique_ptr<InputDevice> iDevice;
+	std::unique_ptr<InputDevice> iDevice;*/
 	std::unique_ptr<Timer> timer;
-	std::unique_ptr<PhysicsDevice> pDevice;
+	//std::unique_ptr<PhysicsDevice> pDevice;
 	GAME_FLT gameTime;
-	std::unique_ptr<View> view;
+	//std::unique_ptr<View> view;
 	std::vector<std::shared_ptr<Object>> objects;
 	std::vector<std::shared_ptr<Object>> newObjects;
 	bool paused;

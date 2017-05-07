@@ -17,7 +17,7 @@ public:
 	Component(std::shared_ptr<Object> owner);
 	~Component();
 	virtual bool Initialize(GAME_OBJECTFACTORY_INITIALIZERS) = 0;
-	virtual std::unique_ptr<Object> Update() = 0;
+	virtual std::shared_ptr<Object> Update() = 0;
 	virtual bool Finish() = 0;
 protected:
 	std::shared_ptr<Object> _owner;

@@ -76,8 +76,11 @@ bool GraphicsDevice::Initialize(bool fullScreen)
 		return(false);
 	}
 	
+	/*SDL_Surface* bg = IMG_Load("./Assets/Images/bg_Level1.png");
+	background = SDL_CreateTextureFromSurface(renderer, bg);*/
 	//Set the background color (default)
-	SDL_SetRenderDrawColor(renderer,237,201,175,255);
+	//SDL_SetRenderTarget(renderer, background);
+	//SDL_SetRenderDrawColor(renderer,237,201,175,255);
 
 	//Clear the renderer.
 	Begin();
@@ -149,7 +152,7 @@ void GraphicsDevice::setBackground(std::string bgPath)
 		Present();
 
 		//Get rid of old loaded surface
-		SDL_FreeSurface(loadedSurface);
+		//SDL_FreeSurface(loadedSurface);
 	}
 }
 
@@ -165,9 +168,24 @@ void GraphicsDevice::addSprite(SpriteComponent* sprite)
 	sprites.push_back(sprite);
 }
 
+//Remove a sprite.
+void GraphicsDevice::removeSprite(SpriteComponent* dSprite)
+{
+	std::vector<SpriteComponent*>::iterator spriteIter;
+	for (spriteIter = sprites.begin(); spriteIter != sprites.end(); ++spriteIter)
+	{
+		if (*spriteIter == dSprite)
+		{
+			sprites.erase(spriteIter);
+			break;
+		}
+	}
+}
+
 //Draw all loaded sprites.
 void GraphicsDevice::Draw()
 {
+	SDL_RenderCopy(renderer, background, NULL, NULL);
 	for (auto sprite : sprites)
 	{
 		sprite->Draw();

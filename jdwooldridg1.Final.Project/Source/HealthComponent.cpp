@@ -1,9 +1,7 @@
 #include "HealthComponent.h"
 #include "SpriteComponent.h"
 #include "BodyComponent.h"
-#include "Game.h"
-//#include "ResourceManager.h"
-#include "PhysicsDevice.h"
+#include "DeviceAndLibraryManager.h"
 
 //HealthComponent::~HealthComponent() {}
 
@@ -14,7 +12,7 @@ bool HealthComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS presets)
 {
 	//devices = presets.devices;
 	health = presets.health;
-	pDevice = presets.game->getPhysicsDevice();
+	deviceAndLibraries = presets.devicesAndLibraries;
 	return true;
 }
 
@@ -45,12 +43,9 @@ bool HealthComponent::KillObject()
 
 //**************************************
 //checks for death and deals with it
-std::unique_ptr<Object> HealthComponent::Update()
+std::shared_ptr<Object> HealthComponent::Update()
 //**************************************
 {
-	//For any projectile (cereal piece or bullet), decrement its health.
-	/*if (NULL)
-		--health;*/
 	//if dead
 	if (health <= 0)
 	{

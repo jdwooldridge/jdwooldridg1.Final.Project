@@ -32,6 +32,7 @@ public:
 
 	void Draw();
 	void addSprite(SpriteComponent*);
+	void removeSprite(SpriteComponent*);
 
 	void setBackground(std::string background);
 	SDL_Renderer* getRenderer();

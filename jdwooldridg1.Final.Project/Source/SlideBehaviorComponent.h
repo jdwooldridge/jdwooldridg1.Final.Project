@@ -1,6 +1,8 @@
 #pragma once
 #include "ComponentList.h"
 
+class DeviceAndLibraryManager;
+
 class SlideBehaviorComponent : public Component
 {
 public:
@@ -10,11 +12,11 @@ public:
     { };
 
     bool Initialize(GAME_OBJECTFACTORY_INITIALIZERS initializers);
-    std::unique_ptr<Object> Update();
+    std::shared_ptr<Object> Update();
     bool Finish();
 private:
     bool vertical;
     int posNeg;
     GAME_FLT aDelta;
-	PhysicsDevice* pDevice;
+	std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries;
 };

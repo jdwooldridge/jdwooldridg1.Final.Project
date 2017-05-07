@@ -96,6 +96,12 @@
     <ClInclude Include="Source\JumpComponent.h">
       <Filter>Header Files\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Source\DeviceAndLibraryManager.h">
+      <Filter>Header Files\Devices and Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TimedLifeComponent.h">
+      <Filter>Header Files\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ArtAssetLibrary.cpp">
@@ -174,6 +180,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\JumpComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DeviceAndLibraryManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TimedLifeComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

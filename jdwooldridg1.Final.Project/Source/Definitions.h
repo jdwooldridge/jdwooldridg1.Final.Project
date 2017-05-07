@@ -3,6 +3,11 @@
 #ifndef _STRING_
 #include <string>
 #endif
+
+#ifndef _MEMORY_
+#include <memory>
+#endif
+
 //class Game;
 
 //Basic Types
@@ -46,14 +51,14 @@ enum GAME_BODY_TYPE { GAME_STATIC, GAME_DYNAMIC };
 
 //enum OBJECT_TYPE { PLAYER, ENEMY, PLAYER_PROJECTILE, ENEMY_PROJECTILE};
 
-class Game;
+class DeviceAndLibraryManager;
 
 typedef struct _GAME_OBJECTFACTORY_INITIALIZERS
 {
 	std::string objectType;
 	GAME_VEC position;
 	GAME_FLT angle;
-	Game* game; //For grabbing artassetlibrary, view, etc.
+	std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries; //For grabbing artassetlibrary, view, etc.
 	GAME_INT health;
 	GAME_BODY_TYPE bodyType;
 	GAME_OBJECT_SHAPE objectShape;

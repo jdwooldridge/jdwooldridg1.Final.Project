@@ -14,14 +14,9 @@ Game::Game()
 	gLibrary._Myptr() = new GameAssetLibrary();
 	iDevice._Myptr() = new InputDevice();*/
 
-	gDevice = std::make_unique<GraphicsDevice>(SCREEN_WIDTH, SCREEN_HEIGHT);
-	aLibrary = std::make_unique<ArtAssetLibrary>();
 	timer = std::make_unique<Timer>();
-	view = std::make_unique<View>();
-	gLibrary = std::make_unique<GameAssetLibrary>();
-	iDevice = std::make_unique<InputDevice>();
-	pLibrary = std::make_unique<PhysicsAssetLibrary>();
-	pDevice = std::make_unique<PhysicsDevice>(0, -9.8f);
+
+	devicesAndLibraries = NULL;
 	gameTime = 0;
 	paused = false;
 	curLevel = 1;
@@ -31,45 +26,18 @@ Game::Game()
 
 Game::~Game()
 {
-	gDevice->ShutDown();
+	if (devicesAndLibraries)
+	{
+		devicesAndLibraries->Shutdown();
+		devicesAndLibraries = NULL;
+	}
 }
 
 bool Game::Initialize()
 {
-
-	if (!gDevice->Initialize(false)) //Initialize graphics device; throw error if it is not possible.
-	{
-		std::cout << "Could not initialize graphics device!" << std::endl;
-		return false;
-	}
-	if (!aLibrary->Initialize(gDevice.get())) //Initialize art library; throw error if it is not possible.
-	{
-		std::cout << "Could not initialize art library!" << std::endl;
-		return false;
-	}
-	if (!gLibrary->Initialize()) //Initialize game asset library; throw error if it is not possible.
-	{
-		std::cout << "Could not initialize game asset library!" << std::endl;
-		return false;
-	}
-	if (!iDevice->Initialize()) //Initialize input device; throw error if it is not possible.
-	{
-		std::cout << "Could not initialize input device!" << std::endl;
-		return false;
-	}
 	if (!timer->Initialize()) //Initialize timer; throw error if it is not possible.
 	{
 		std::cout << "Could not initialize timer!" << std::endl;
-		return false;
-	}
-	if (!view->Initialize(iDevice.get(), 0, SCREEN_HEIGHT - 250)) //Initialize view; throw error if it is not possible.
-	{
-		std::cout << "Could not initialize game view!" << std::endl;
-		return false;
-	}
-	if (!pDevice->Initialize())
-	{
-		std::cout << "Could not initialize physics device!" << std::endl;
 		return false;
 	}
 	return true;
@@ -79,7 +47,7 @@ bool Game::Initialize()
 bool Game::Update()
 {
 	//Update the physics device.
-	pDevice->Update(dt);
+	devicesAndLibraries->getPhysicsDevice()->Update(dt);
 
 	//Check for dead objects and remove them.
 	for (std::vector<std::shared_ptr<Object>>::iterator object = objects.begin(); object != objects.end(); ++object)
@@ -89,9 +57,12 @@ bool Game::Update()
 			std::cout << "YOU DIED.";
 		if ((*object)->getIsDead())
 		{
+			//Remove the object's sprite.
+			devicesAndLibraries->getGraphicsDevice()->removeSprite((*object)->GetComponent<SpriteComponent>().get());
+			//stop the physics on it
+			devicesAndLibraries->getPhysicsDevice()->SetStopPhysics((*object).get());
 			//close off the componenets.
 			(*object)->removeComponents();
-
 			//remove object from the vector.
 			objects.erase(object);
 			//back up to previous item because this one was deleted.
@@ -107,19 +78,26 @@ bool Game::Update()
 	}
 
 	for (auto&& object : objects) //Iterate over every object and update them.
-		object->Update(gameTime);
+	{
+		std::shared_ptr<Object> temp = object->Update(gameTime);
+		//if it returned an object, add it to the list to be added.
+		if (temp != nullptr)
+		{
+			newObjects.push_back(temp);
+		}
+	}
 	return true;
 }
 
 //Perform updating and drawing of objects, amongst other things.
 bool Game::Run()
 {
-	if (iDevice->GetEvent(GAME_QUIT))
+	if (devicesAndLibraries->getInputDevice()->GetEvent(GAME_QUIT))
 		return true;
-	if (iDevice->GetEvent(GAME_PAUSE))
+	if (devicesAndLibraries->getInputDevice()->GetEvent(GAME_PAUSE))
 		paused = !paused;
 	timer->start();
-	iDevice->Update();
+	devicesAndLibraries->getInputDevice()->Update();
 	if (!paused)
 	{
 		Update(); //Update objects.
@@ -134,14 +112,18 @@ bool Game::Run()
 //Draw every object.
 void Game::Draw()
 {
-	gDevice->Begin();
-	gDevice->Draw();
-	gDevice->Present();
+	devicesAndLibraries->getGraphicsDevice()->Begin();
+	devicesAndLibraries->getGraphicsDevice()->Draw();
+	devicesAndLibraries->getGraphicsDevice()->Present();
 }
 
 bool Game::LoadLevel(std::string levelConfigFile, std::string objectConfigFile)
 {
 	Reset();
+
+	//Make device manager
+	devicesAndLibraries = std::make_unique<DeviceAndLibraryManager>();
+	devicesAndLibraries->Initialize();
 
 	//Load files.
 	TiXmlDocument lvlConfig(levelConfigFile.c_str());
@@ -165,7 +147,7 @@ bool Game::LoadLevel(std::string levelConfigFile, std::string objectConfigFile)
 		std::string name = objRoot->Attribute("name");
 		std::string path = objRoot->Attribute("sprite");
 
-		aLibrary->AddAsset(name, path);
+		devicesAndLibraries->getArtLibrary()->AddAsset(name, path);
 		objRoot = objRoot->NextSiblingElement("Creature");
 	}
 
@@ -173,14 +155,13 @@ bool Game::LoadLevel(std::string levelConfigFile, std::string objectConfigFile)
 
 	//Set the background for this level.
 	std::string bgPath = lvlRoot->Attribute("background");
-	gDevice->setBackground(bgPath);
+	devicesAndLibraries->getGraphicsDevice()->setBackground(bgPath);
 
 	lvlRoot = lvlRoot->FirstChildElement("GameAsset");
 
 	while (lvlRoot)
-	{
-		std::shared_ptr<ObjectFactory> objectFactory; /*= gLibrary->Search(lvlRoot->Attribute("name")); //Find object factory for the loaded object.*/
-		std::shared_ptr<Object> tmp = objectFactory->create(lvlRoot); //Create the object.
+	{ 
+		std::shared_ptr<Object> tmp = devicesAndLibraries->getObjectFactory()->create(lvlRoot, devicesAndLibraries); //Create the object.
 		if (tmp == NULL)
 		{
 			std::cout << "Error: Could not initialize object!";
@@ -196,25 +177,13 @@ bool Game::LoadLevel(std::string levelConfigFile, std::string objectConfigFile)
 //Purge the objects vector.
 void Game::Reset()
 {
-	objects.clear();
-}
-
-GraphicsDevice* Game::getGraphicsDevice()
-{
-	return gDevice.get();
-}
-
-View* Game::getView()
-{
-	return view.get();
-}
-
-ArtAssetLibrary* Game::getArtAssetLibrary()
-{
-	return aLibrary.get();
-}
-
-InputDevice* Game::getInputDevice()
-{
-	return iDevice.get();
+	if (!objects.empty())
+	{
+		for (auto object : objects)
+			devicesAndLibraries->getPhysicsDevice()->RemoveObject(object.get());
+		objects.clear();
+	}
+	if (devicesAndLibraries)
+		devicesAndLibraries->Shutdown();
+	devicesAndLibraries = NULL;
 }

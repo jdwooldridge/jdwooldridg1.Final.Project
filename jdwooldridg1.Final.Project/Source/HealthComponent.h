@@ -4,7 +4,7 @@
 #include "Definitions.h"
 //class ResourceManager;
 
-class PhysicsDevice;
+class DeviceAndLibraryManager;
 
 class HealthComponent : public Component
 {
@@ -22,10 +22,11 @@ public:
 
 	bool KillObject();
 
-	std::unique_ptr<Object> Update();
+	std::shared_ptr<Object> Update();
 	bool Finish();
 protected:
 	GAME_INT health;
-	PhysicsDevice* pDevice;
+	GAME_INT immunity;
+	std::shared_ptr<DeviceAndLibraryManager> deviceAndLibraries;
 	//std::shared_ptr<ResourceManager> devices;
 };

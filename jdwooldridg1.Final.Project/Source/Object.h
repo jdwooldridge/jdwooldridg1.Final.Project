@@ -17,7 +17,7 @@ public:
     Object();
     ~Object();
     bool Initialize(GAME_OBJECTFACTORY_INITIALIZERS);
-    std::unique_ptr<Object> Update(GAME_FLT); 
+    std::shared_ptr<Object> Update(GAME_FLT); 
     void addComponent(std::shared_ptr<Component>);
     template<class T>
     std::shared_ptr<T> GetComponent()

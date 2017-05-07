@@ -22,13 +22,13 @@ bool PhysicsDevice::Initialize()
 	if (world == NULL) return false;
 	ContactListener* c1 = new ContactListener();
 	world -> SetContactListener(c1);
-	const b2Vec2 vBottomLeft = b2Vec2(RW2PW(0.0f), RW2PW(SCREEN_HEIGHT));
+	/*const b2Vec2 vBottomLeft = b2Vec2(RW2PW(0.0f), RW2PW(SCREEN_HEIGHT));
 	const b2Vec2 vBottomRight = b2Vec2(RW2PW(SCREEN_WIDTH), RW2PW(SCREEN_HEIGHT));
 	b2EdgeShape bottom;
 	b2BodyDef bd;
 	b2Body* edge = world->CreateBody(&bd);
 	bottom.Set(vBottomLeft, vBottomRight);
-	edge->CreateFixture(&bottom, 0);
+	edge->CreateFixture(&bottom, 0);*/
 	return true;
 }
 

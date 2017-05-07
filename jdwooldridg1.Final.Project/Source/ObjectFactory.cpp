@@ -2,22 +2,16 @@
 
 #include "tinyxml\tinyxml.h"
 
+#include "DeviceAndLibraryManager.h"
 #include "ComponentList.h"
 #include "ObjectFactory.h"
 
-ObjectFactory::ObjectFactory(Game* game)
-{
-	this->game = game;
-}
-
-
-ObjectFactory::~ObjectFactory() {}
-
-std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot)
+std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot, std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries)
 {
 	std::shared_ptr<Object> newObject = std::make_shared<Object>();
 	GAME_OBJECTFACTORY_INITIALIZERS presets;
 
+	presets.devicesAndLibraries = devicesAndLibraries;
 	presets.objectType = lvlRoot->Attribute("name");
 
 	TiXmlElement* comp = lvlRoot->FirstChildElement("Component");
@@ -49,7 +43,7 @@ std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot)
 			comp->QueryBoolAttribute("physicsOn", &presets.physicsOn);
 		}
 
-		else if (componentName == "Health")
+		else if (componentName == "Health" || componentName == "Timed")
 		{
 			comp->QueryUnsignedAttribute("amount", &presets.health);
 		}
@@ -60,23 +54,25 @@ std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot)
 	return std::move(create(componentList, presets));
 }
 
-std::unique_ptr<Object> create(std::vector<std::string> componentList, GAME_OBJECTFACTORY_INITIALIZERS initializers)
+std::shared_ptr<Object> ObjectFactory::create(std::vector<std::string> componentList, GAME_OBJECTFACTORY_INITIALIZERS initializers)
 {
 	//Create object.
-	std::unique_ptr<Object> newObject = std::make_unique<Object>();
+	std::shared_ptr<Object> newObject = std::make_shared<Object>();
 
 	for (auto component : componentList)
 	{
 		if (component == "Body")
-			newObject->addComponent(std::make_shared<BodyComponent>(newObject.get()));
+			newObject->addComponent(std::make_shared<BodyComponent>(newObject));
 		else if (component == "Sprite")
-			newObject->addComponent(std::make_shared<SpriteComponent>(newObject.get()));
+			newObject->addComponent(std::make_shared<SpriteComponent>(newObject));
 		else if (component == "Slide")
-			newObject->addComponent(std::make_shared<SlideBehaviorComponent>(newObject.get()));
+			newObject->addComponent(std::make_shared<SlideBehaviorComponent>(newObject));
 		else if (component == "Input")
-			newObject->addComponent(std::make_shared<SlideBehaviorComponent>(newObject.get()));
+			newObject->addComponent(std::make_shared<PlayerInputComponent>(newObject));
 		else if (component == "Health")
-			newObject->addComponent(std::make_shared<HealthComponent>(newObject.get()));
+			newObject->addComponent(std::make_shared<HealthComponent>(newObject));
+		else if (component == "Timed")
+			newObject->addComponent(std::make_shared<TimedLifeComponent>(newObject));
 	}
 	if (!newObject->Initialize(initializers))
 	{
@@ -84,5 +80,5 @@ std::unique_ptr<Object> create(std::vector<std::string> componentList, GAME_OBJE
 		return nullptr;
 	}
 	else
-		return std::move(newObject);
+		return newObject;
 }

@@ -14,7 +14,7 @@ public:
     { };
 
     bool Initialize(GAME_OBJECTFACTORY_INITIALIZERS initializers);
-    std::unique_ptr<Object> Update();
+    std::shared_ptr<Object> Update();
     bool Finish();
     GAME_VEC getPosition();
     GAME_FLT getAngle();
@@ -27,5 +27,5 @@ private:
     GAME_VEC position;
     GAME_FLT angle;
 
-	PhysicsDevice* pDevice;
+	std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries;
 };
