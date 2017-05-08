@@ -16,6 +16,7 @@ public:
 
 	//Loads image at specified path
 	bool load(SDL_Renderer* renderer, std::string path);
+	bool load(SDL_Texture* texture);
 
 	//Deallocates texture
 	void free();

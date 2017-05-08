@@ -13,6 +13,14 @@ bool DeviceAndLibraryManager::Initialize()
 		return false;
 	}
 
+	GAME_RGBA RGBA;
+	RGBA.R = 0;
+	RGBA.G = 0;
+	RGBA.B = 0;
+	RGBA.A = 255;
+	//set graphic device font
+	gDevice->SetFont("./Assets/Fonts/comic.ttf", 16, RGBA);
+
 	aLibrary = std::make_unique<ArtAssetLibrary>();
 	if (!aLibrary->Initialize(gDevice.get())) //Initialize art library; throw error if it is not possible.
 	{
@@ -38,7 +46,7 @@ bool DeviceAndLibraryManager::Initialize()
 		return false;
 	}
 
-	pDevice = std::make_unique<PhysicsDevice>(0, 9.8f);
+	pDevice = std::make_unique<PhysicsDevice>(0, +98);
 	if (!pDevice->Initialize())
 	{
 		std::cout << "Could not initialize physics device!" << std::endl;
@@ -52,7 +60,23 @@ bool DeviceAndLibraryManager::Initialize()
 		return false;
 	}
 
+	sDevice = std::make_unique<SoundDevice>();
+	if (!sDevice->Initialize())
+	{
+		std::cout << "Could not initialize sound device!" << std::endl;
+		return false;
+	}
+
+	sLibrary = std::make_unique<SoundAssetLibrary>();
+	if (!sLibrary->Initialize(sDevice.get()))
+	{
+		std::cout << "Could not initialize sound asset library!" << std::endl;
+		return false;
+	}
+
 	objectFactory = std::make_shared<ObjectFactory>();
+
+	lives = 3;
 
 	return true;
 }
@@ -61,14 +85,14 @@ bool DeviceAndLibraryManager::Shutdown()
 {
 	iDevice = nullptr;
 
-	//sLibrary->Finish();
-	//sLibrary = NULL;
+	sLibrary->Finish();
+	sLibrary = NULL;
 
 	gDevice->ShutDown();
 	gDevice = NULL;
 
-	//sDevice->Shutdown();
-	//sDevice = NULL;
+	sDevice->Shutdown();
+	sDevice = NULL;
 
 	pDevice = NULL;
 

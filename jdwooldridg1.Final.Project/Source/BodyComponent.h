@@ -4,7 +4,7 @@
 
 #include "ComponentList.h"
 
-class PhysicsDevice;
+class DeviceAndLibraryManager;
 
 class BodyComponent : public Component
 {
@@ -19,6 +19,7 @@ public:
     GAME_VEC getPosition();
     GAME_FLT getAngle();
     GAME_VEC getStartPosition();
+	std::shared_ptr<DeviceAndLibraryManager> GetDevices() { return devicesAndLibraries; }
     void setPositionX(GAME_FLT);
     void setPositionY(GAME_FLT);
     void setAngle(GAME_FLT);

@@ -12,6 +12,7 @@ bool HealthComponent::Initialize(GAME_OBJECTFACTORY_INITIALIZERS presets)
 {
 	//devices = presets.devices;
 	health = presets.health;
+	immunity = 0;
 	deviceAndLibraries = presets.devicesAndLibraries;
 	return true;
 }
@@ -46,18 +47,11 @@ bool HealthComponent::KillObject()
 std::shared_ptr<Object> HealthComponent::Update()
 //**************************************
 {
+	if (immunity > 0)
+		--immunity;
 	//if dead
 	if (health <= 0)
 	{
-		//if this is a joined object
-		//if (_owner->GetJoinedWith() != NULL)
-		//{
-		//	//Turn off the joined object
-		//	std::shared_ptr<GameObject> joined = _owner->GetJoinedWith();
-		//	devices->GetPhysicsDevice()->SetStopPhysics(joined.get());
-		//	//destroy the joints
-		//	devices->GetPhysicsDevice()->DestroyJoint(_owner.get());
-		//}
 		//kill it
 		KillObject();
 	}

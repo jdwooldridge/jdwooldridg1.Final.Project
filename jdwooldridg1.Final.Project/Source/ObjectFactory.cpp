@@ -22,7 +22,7 @@ std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot, std::shared
 		std::string componentName = comp->Attribute("name");
 		componentList.push_back(componentName);
 
-		if (componentName ==  "Body")
+		if (componentName == "Body")
 		{
 			comp->QueryFloatAttribute("x", &presets.position.x);
 			comp->QueryFloatAttribute("y", &presets.position.y);
@@ -47,6 +47,8 @@ std::shared_ptr<Object> ObjectFactory::create(TiXmlElement* lvlRoot, std::shared
 		{
 			comp->QueryUnsignedAttribute("amount", &presets.health);
 		}
+		else if (componentName == "Damage")
+			comp->QueryUnsignedAttribute("amount", &presets.damageAmt);
 
 		comp = comp->NextSiblingElement("Component");
 	}
@@ -59,6 +61,7 @@ std::shared_ptr<Object> ObjectFactory::create(std::vector<std::string> component
 	//Create object.
 	std::shared_ptr<Object> newObject = std::make_shared<Object>();
 
+	//Go through the component list and add all of the object's required components to it.
 	for (auto component : componentList)
 	{
 		if (component == "Body")
@@ -73,7 +76,14 @@ std::shared_ptr<Object> ObjectFactory::create(std::vector<std::string> component
 			newObject->addComponent(std::make_shared<HealthComponent>(newObject));
 		else if (component == "Timed")
 			newObject->addComponent(std::make_shared<TimedLifeComponent>(newObject));
+		else if (component == "Item")
+			newObject->addComponent(std::make_shared<ItemComponent>(newObject));
+		else if (component == "Shoot")
+			newObject->addComponent(std::make_shared<ShootComponent>(newObject));
+		else if (component == "Damage")
+			newObject->addComponent(std::make_shared<DamageComponent>(newObject));
 	}
+	//Initialize the object.
 	if (!newObject->Initialize(initializers))
 	{
 		std::cout << "Failed to initialize object!" << std::endl;

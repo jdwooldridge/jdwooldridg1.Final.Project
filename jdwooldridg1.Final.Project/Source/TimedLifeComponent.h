@@ -15,5 +15,6 @@ public:
 	bool Finish();
 private:
 	GAME_INT health;
+	bool goLeft;
 	std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries;
 };

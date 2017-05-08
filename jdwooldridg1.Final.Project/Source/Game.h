@@ -46,8 +46,10 @@ private:
 	std::vector<std::shared_ptr<Object>> newObjects;
 	bool paused;
 	GAME_INT curLevel;
+	GAME_INT lives;
 	GAME_FLT dt;
-	GAME_INT score;
+	std::string curLevelConfig;
+	std::string curLevelAssets;
 };
 
 #endif // !GAME_H

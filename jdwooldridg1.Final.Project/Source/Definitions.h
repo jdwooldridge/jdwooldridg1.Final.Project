@@ -59,7 +59,8 @@ typedef struct _GAME_OBJECTFACTORY_INITIALIZERS
 	GAME_VEC position;
 	GAME_FLT angle;
 	std::shared_ptr<DeviceAndLibraryManager> devicesAndLibraries; //For grabbing artassetlibrary, view, etc.
-	GAME_INT health;
+	GAME_INT health; //Amount of health this object will have.
+	GAME_INT damageAmt; //Amount of damage the object will inflict.
 	GAME_BODY_TYPE bodyType;
 	GAME_OBJECT_SHAPE objectShape;
 	GAME_FLT density;
@@ -67,12 +68,21 @@ typedef struct _GAME_OBJECTFACTORY_INITIALIZERS
 	GAME_FLT restitution;
 	GAME_FLT angularDamping;
 	GAME_FLT linearDamping;
+	bool goLeft; //Used for determining which way a projectile should travel.
 	bool physicsOn;
 				/*GAME_INT destructTime;//move to new AssetLibraryGame
 				std::shared_ptr<ResourceManager> devices;
 				std::map<GAME_DIRECTION, bool> gDirection;
 				std::shared_ptr<GameObject> joinedObject; //only needed for joint*/
 } GAME_OBJECTFACTORY_INITIALIZERS;
+
+typedef struct GAME_RGBA
+{
+	GAME_INT R; //Red amount
+	GAME_INT G; //Green amount
+	GAME_INT B; //Blue amount
+	GAME_INT A; //Alpha
+}GAME_RGBA;
 
 //Event Types
 enum GAME_EVENT { GAME_NA, GAME_UP, GAME_DOWN, GAME_LEFT, GAME_RIGHT, GAME_QUIT, GAME_SPACE, GAME_PAUSE, GAME_NUM_EVENTS };

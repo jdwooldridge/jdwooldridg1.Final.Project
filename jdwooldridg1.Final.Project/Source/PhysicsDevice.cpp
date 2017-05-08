@@ -191,7 +191,7 @@ bool PhysicsDevice::createFixture(Object* object, GAME_OBJECTFACTORY_INITIALIZER
 	b2FixtureDef shapefd;
 	
 	//Set userData field with passed in object pointer.
-	bd -> userData = object;
+	bd->userData = object;
 	
 
 	//set body type

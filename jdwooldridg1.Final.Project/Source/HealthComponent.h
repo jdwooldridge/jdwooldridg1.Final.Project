@@ -20,6 +20,10 @@ public:
 
 	void SetHealth(GAME_INT health) { this->health = health; }
 
+	GAME_INT getImmunity() { return immunity; }
+
+	void setImmunity(GAME_INT immunity) { this->immunity = immunity; }
+
 	bool KillObject();
 
 	std::shared_ptr<Object> Update();

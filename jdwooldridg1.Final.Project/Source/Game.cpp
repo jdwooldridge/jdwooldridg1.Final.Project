@@ -16,11 +16,12 @@ Game::Game()
 
 	timer = std::make_unique<Timer>();
 
+	curLevel = 1;
+	curLevelConfig = "./Assets/Config/level" + std::to_string(curLevel) + ".xml";
+	curLevelAssets = "./Assets/Config/level" + std::to_string(curLevel) + "Assets.xml";
 	devicesAndLibraries = NULL;
 	gameTime = 0;
 	paused = false;
-	curLevel = 1;
-	score = 0;
 	dt = 1 / GAME_FPS;
 }
 
@@ -43,7 +44,7 @@ bool Game::Initialize()
 	return true;
 }
 
-//Update every object in the objects vector, along with the view.
+//Update every object in the objects vector and remove ones that are dead. Also update the UI display at the top of the screen.
 bool Game::Update()
 {
 	//Update the physics device.
@@ -52,9 +53,40 @@ bool Game::Update()
 	//Check for dead objects and remove them.
 	for (std::vector<std::shared_ptr<Object>>::iterator object = objects.begin(); object != objects.end(); ++object)
 	{
-		//if it is dead
-		if ((*object)->getObjectType() == "John" && (*object)->getIsDead())
-			std::cout << "YOU DIED.";
+		devicesAndLibraries->getGraphicsDevice()->Text2Screen("Lives: " + std::to_string(devicesAndLibraries->getLives()), SCREEN_WIDTH - 10, 10); //Update lives display.
+		devicesAndLibraries->getGraphicsDevice()->Text2Screen("Score: " + std::to_string(devicesAndLibraries->getScore()), SCREEN_WIDTH - 10, 50); //Update score display.
+		//Perform the following actions if the current object is the player.
+		if ((*object)->getObjectType() == "John")
+		{
+			devicesAndLibraries->getGraphicsDevice()->Text2Screen("Health: " + std::to_string((*object)->GetComponent<HealthComponent>()->GetHealth()), 10, 10); //Update player's health display.
+			if ((*object)->getIsDead()) //Reload level and decrement lives by one if player dies.
+			{
+				devicesAndLibraries->setLives(devicesAndLibraries->getLives() - 1);
+				LoadLevel(curLevelConfig, curLevelAssets);
+				std::cout << "YOU DIED.";
+			}
+		}
+		//Perform the following actions if the current object is the boss.
+		if ((*object)->getObjectType() == "Boss")
+		{
+			devicesAndLibraries->getGraphicsDevice()->Text2Screen("Enemy: " + std::to_string((*object)->GetComponent<HealthComponent>()->GetHealth()), 10, 50); //Update the boss's health display.
+			if((*object)->getIsDead()) //Go onto the next level if the boss dies.
+			{
+				++curLevel;
+				curLevelConfig = "./Assets/Config/level" + std::to_string(curLevel) + ".xml";
+				curLevelAssets = "./Assets/Config/level" + std::to_string(curLevel) + "Assets.xml";
+				LoadLevel(curLevelConfig, curLevelAssets);
+				std::cout << "LEVEL COMPLETE";
+			}
+			if(devicesAndLibraries->getView()->getPosition().x + SCREEN_WIDTH == (*object)->GetComponent<BodyComponent>()->getPosition().x) //Change background music to boss theme if the boss comes into view.
+				devicesAndLibraries->getSoundDevice()->SetBackground("Boss");
+		}
+		//Change background music to boss theme if the boss comes into view.
+		/*if ((*object)->getObjectType() == "Boss" && devicesAndLibraries->getView()->getPosition().x + SCREEN_WIDTH >= (*object)->GetComponent<BodyComponent>()->getPosition().x)
+		{
+			devicesAndLibraries->getSoundDevice()->SetBackground("Boss");
+		}*/
+		//If any other object dies.
 		if ((*object)->getIsDead())
 		{
 			//Remove the object's sprite.
@@ -88,12 +120,18 @@ bool Game::Update()
 	}
 	return true;
 }
-
 //Perform updating and drawing of objects, amongst other things.
 bool Game::Run()
 {
+	if (devicesAndLibraries->getLives() <= 0)
+	{
+		printf("GAME OVER");
+		return true;
+	}
+	//If Q is pressed, quit the game.
 	if (devicesAndLibraries->getInputDevice()->GetEvent(GAME_QUIT))
 		return true;
+	//If P is pressed, pause/unpause the game.
 	if (devicesAndLibraries->getInputDevice()->GetEvent(GAME_PAUSE))
 		paused = !paused;
 	timer->start();
@@ -139,21 +177,37 @@ bool Game::LoadLevel(std::string levelConfigFile, std::string objectConfigFile)
 		std::cout << "Error: Could not load object XML file!";
 		return false;
 	}
-
+	//Load graphics.
 	TiXmlElement* objRoot = objConf.FirstChildElement("Objects");
-	objRoot = objRoot->FirstChildElement("Creature");
-	while (objRoot)
+	TiXmlElement* objElem = objRoot->FirstChildElement("Creature");
+	while (objElem)
 	{
-		std::string name = objRoot->Attribute("name");
-		std::string path = objRoot->Attribute("sprite");
+		std::string name = objElem->Attribute("name");
+		std::string path = objElem->Attribute("sprite");
 
 		devicesAndLibraries->getArtLibrary()->AddAsset(name, path);
-		objRoot = objRoot->NextSiblingElement("Creature");
+		objElem = objElem->NextSiblingElement("Creature");
+	}
+
+	//Load the sounds.
+	objRoot = objRoot->NextSiblingElement("Sounds");
+	objElem = objRoot->FirstChildElement("Sound");
+	while (objElem)
+	{
+		std::string name = objElem->Attribute("name");
+		std::string path = objElem->Attribute("path");
+		bool isBg;
+		objElem ->QueryBoolAttribute("background", &isBg);
+		if (isBg)
+			devicesAndLibraries->getSoundAssetLibrary()->AddBackgroundMusic(name, path);
+		else
+			devicesAndLibraries->getSoundAssetLibrary()->AddSoundEffect(name, path);
+		objElem = objElem->NextSiblingElement("Sound");
 	}
 
 	TiXmlElement* lvlRoot = lvlConfig.FirstChildElement("Level1");
 
-	//Set the background for this level.
+	//Set the background image for this level.
 	std::string bgPath = lvlRoot->Attribute("background");
 	devicesAndLibraries->getGraphicsDevice()->setBackground(bgPath);
 
@@ -171,6 +225,8 @@ bool Game::LoadLevel(std::string levelConfigFile, std::string objectConfigFile)
 			objects.push_back(tmp); //Push this object onto the objects vector.
 		lvlRoot = lvlRoot->NextSiblingElement("GameAsset");
 	}
+
+	devicesAndLibraries->getSoundDevice()->SetBackground("Theme");
 	return true;
 }
 

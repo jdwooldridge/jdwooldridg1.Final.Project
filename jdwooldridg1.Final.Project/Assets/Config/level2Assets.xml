@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<Objects>
+  <Creature name="John" sprite="./Assets/Images/johnStand.png"/>
+  <Creature name="Box" sprite="./Assets/Images/box.png"/>
+  <Creature name="Bowl" sprite="./Assets/Images/bowl.png"/>
+  <Creature name="Bullet" sprite="./Assets/Images/bullet.png"/>
+  <Creature name="Spoon" sprite="./Assets/Images/spoon.png"/>
+  <Creature name="Boss" sprite="./Assets/Images/bossLevel2.png"/>
+  <Creature name="Coin" sprite="./Assets/Images/coin.png"/>
+  <Creature name="Pizza" sprite="./Assets/Images/pizza.png"/>
+  <Creature name="Chips" sprite="./Assets/Images/chips.png"/>
+  <Creature name="Cereal" sprite="./Assets/Images/cereal.png"/>
+</Objects>
+
+<Sounds>
+ <Sound name="Fire" path="./Assets/Sounds/fire.wav" background="false"/>
+ <Sound name="EnemyFire" path="./Assets/Sounds/enemyFire.wav" background="false"/>
+ <Sound name="Hit" path="./Assets/Sounds/hit.wav" background="false"/>
+ <Sound name="EnemyHit" path="./Assets/Sounds/enemyHit.wav" background="false"/>
+ <Sound name="GetCoin" path="./Assets/Sounds/getCoin.wav" background="false"/>
+ <Sound name="GetChips" path="./Assets/Sounds/getChips.wav" background="false"/>
+ <Sound name="GetPizza" path="./Assets/Sounds/getPizza.wav" background="false"/>
+ <Sound name="Theme" path="./Assets/Sounds/level2.ogg" background="true"/>
+ <Sound name="Boss" path="./Assets/Sounds/boss.ogg" background="true"/>
+</Sounds>

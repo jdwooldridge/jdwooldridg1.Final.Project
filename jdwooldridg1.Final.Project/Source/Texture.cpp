@@ -64,6 +64,14 @@ bool Texture::load(SDL_Renderer* renderer, std::string path)
 
 }
 
+bool Texture::load(SDL_Texture* texture)
+{
+	this->texture = texture;
+	//Set the height and width from the texture
+	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+	return true;
+}
+
 //Purge the texture if it is not null.
 void Texture::free()
 {

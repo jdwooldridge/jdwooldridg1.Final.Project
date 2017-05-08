@@ -70,8 +70,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)Game\</OutDir>
     <IntDir>$(ProjectDir)Temp\</IntDir>
-    <IncludePath>$(ProjectDir)ThirdParty\SDL2\include;$(ProjectDir)ThirdParty\Box2D;$(ProjectDir)ThirdParty\Box2D\Box2D;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)ThirdParty\Box2D\Box2D\lib;$(ProjectDir)ThirdParty\SDL2\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)ThirdParty\SDL2_ttf-2.0.12\include;$(ProjectDir)ThirdParty\SDL2_mixer-2.0.0\include;$(ProjectDir)ThirdParty\SDL2\include;$(ProjectDir)ThirdParty\Box2D;$(ProjectDir)ThirdParty\Box2D\Box2D;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)ThirdParty\SDL2_mixer-2.0.0\lib\x86;$(ProjectDir)ThirdParty\SDL2_ttf-2.0.12\lib\x86;$(ProjectDir)ThirdParty\Box2D\Box2D\lib;$(ProjectDir)ThirdParty\SDL2\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,11 +81,13 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D.lib;SDL2_Mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>copy "$(ProjectDir)ThirdParty\SDL2\lib\*.dll" "$(ProjectDir)"</Command>
+      <Command>copy "$(ProjectDir)ThirdParty\SDL2\lib\*.dll" "$(ProjectDir)"
+copy "$(ProjectDir)ThirdParty\SDL2_mixer-2.0.0\lib\x86\*.dll" "$(ProjectDir)"
+copy "$(ProjectDir)ThirdParty\SDL2_ttf-2.0.12\lib\x86\*.dll" "$(ProjectDir)"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>move "$(ProjectDir)*.dll" "$(ProjectDir)Game";
@@ -131,6 +133,7 @@ xcopy "$(ProjectDir)Assets" "$(ProjectDir)Game\Assets" /E /I /F /Y</Command>
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\ComponentList.h" />
     <ClInclude Include="Source\ContactListener.h" />
+    <ClInclude Include="Source\DamageComponent.h" />
     <ClInclude Include="Source\Definitions.h" />
     <ClInclude Include="Source\DeviceAndLibraryManager.h" />
     <ClInclude Include="Source\Game.h" />
@@ -138,7 +141,7 @@ xcopy "$(ProjectDir)Assets" "$(ProjectDir)Game\Assets" /E /I /F /Y</Command>
     <ClInclude Include="Source\GraphicsDevice.h" />
     <ClInclude Include="Source\HealthComponent.h" />
     <ClInclude Include="Source\InputDevice.h" />
-    <ClInclude Include="Source\JumpComponent.h" />
+    <ClInclude Include="Source\ItemComponent.h" />
     <ClInclude Include="Source\Object.h" />
     <ClInclude Include="Source\ObjectFactory.h" />
     <ClInclude Include="Source\PhysicsAssetLibrary.h" />
@@ -146,6 +149,8 @@ xcopy "$(ProjectDir)Assets" "$(ProjectDir)Game\Assets" /E /I /F /Y</Command>
     <ClInclude Include="Source\PlayerInputComponent.h" />
     <ClInclude Include="Source\ShootComponent.h" />
     <ClInclude Include="Source\SlideBehaviorComponent.h" />
+    <ClInclude Include="Source\SoundAssetLibrary.h" />
+    <ClInclude Include="Source\SoundDevice.h" />
     <ClInclude Include="Source\SpriteComponent.h" />
     <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\TimedLifeComponent.h" />
@@ -159,13 +164,14 @@ xcopy "$(ProjectDir)Assets" "$(ProjectDir)Game\Assets" /E /I /F /Y</Command>
     <ClCompile Include="Source\BodyComponent.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\ContactListener.cpp" />
+    <ClCompile Include="Source\DamageComponent.cpp" />
     <ClCompile Include="Source\DeviceAndLibraryManager.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GameAssetLibrary.cpp" />
     <ClCompile Include="Source\GraphicsDevice.cpp" />
     <ClCompile Include="Source\HealthComponent.cpp" />
     <ClCompile Include="Source\InputDevice.cpp" />
-    <ClCompile Include="Source\JumpComponent.cpp" />
+    <ClCompile Include="Source\ItemComponent.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\ObjectFactory.cpp" />
     <ClCompile Include="Source\PhysicsAssetLibrary.cpp" />
@@ -173,6 +179,8 @@ xcopy "$(ProjectDir)Assets" "$(ProjectDir)Game\Assets" /E /I /F /Y</Command>
     <ClCompile Include="Source\PlayerInputComponent.cpp" />
     <ClCompile Include="Source\ShootComponent.cpp" />
     <ClCompile Include="Source\SlideBehaviorComponent.cpp" />
+    <ClCompile Include="Source\SoundAssetLibrary.cpp" />
+    <ClCompile Include="Source\SoundDevice.cpp" />
     <ClCompile Include="Source\Source.cpp" />
     <ClCompile Include="Source\SpriteComponent.cpp" />
     <ClCompile Include="Source\Texture.cpp" />
